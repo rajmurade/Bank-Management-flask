@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Bank - Core Management Terminal</title>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN for Modern Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Jinja Template Reference to Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <span class="brand-name">Apex Bank</span>
+            </div>
+            <div class="system-status">
+                <span class="status-indicator online"></span>
+                <span class="status-text">Core Banking Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="dashboard-container">
+        <!-- Hero Section -->
+        <section class="welcome-section">
+            <h1>Core Management Portal</h1>
+            <p>Select an administrative action from the operational array below to manage account structures.</p>
+        </section>
+
+        <!-- Status/Feedback Panel -->
+        <div id="status-panel" class="status-panel hidden">
+            <p id="status-message"></p>
+        </div>
+
+        <!-- 6-Card Action Menu -->
+        <section class="actions-grid">
+            <!-- Card 1: Create Account -->
+            <button class="action-card" data-modal="create-modal">
+                <div class="card-icon icon-create">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Create Account</h3>
+                    <p>Register a new customer account within the central ledger.</p>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+
+            <!-- Card 2: Deposit Money -->
+            <button class="action-card" data-modal="deposit-modal">
+                <div class="card-icon icon-deposit">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Deposit Funds</h3>
+                    <p>Authorize and process credit transactions into an active account.</p>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+
+            <!-- Card 3: Withdraw Money -->
+            <button class="action-card" data-modal="withdraw-modal">
+                <div class="card-icon icon-withdraw">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Withdraw Funds</h3>
+                    <p>Authorize and verify safe debit withdrawals from accounts.</p>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+
+            <!-- Card 4: Account Details -->
+            <button class="action-card" data-modal="details-modal">
+                <div class="card-icon icon-details">
+                    <i class="fa-solid fa-address-card"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Account Details</h3>
+                    <p>Fetch real-time metadata and current balances with secure validation.</p>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+
+            <!-- Card 5: Update Details -->
+            <button class="action-card" data-modal="update-modal">
+                <div class="card-icon icon-update">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Update Profile</h3>
+                    <p>Modify existing client parameters, registration fields, or details.</p>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+
+            <!-- Card 6: Delete Account -->
+            <button class="action-card" data-modal="delete-modal">
+                <div class="card-icon icon-delete">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Delete Account</h3>
+                    <p>Restrict, terminate, and remove account indexes from database registries.</p>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </button>
+        </section>
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Apex Core Systems. System administration access authorized.</p>
+    </footer>
+
+    <!-- ==================== TRANSACTIONAL MODALS ==================== -->
+
+    <!-- Modal 1: Create Account -->
+    <div id="create-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-user-plus"></i> Open New Account</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="create-form" class="bank-form" novalidate>
+                    <div class="form-group">
+                        <label for="create-name">Full Name</label>
+                        <input type="text" id="create-name" placeholder="John Doe" required autocomplete="name">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="create-age">Age</label>
+                        <input type="number" id="create-age" placeholder="Minimum age is 18" required min="18" max="120">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="create-email">Email Address</label>
+                        <input type="email" id="create-email" placeholder="john.doe@example.com" required autocomplete="email">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="create-pin">Security PIN (4 Digits)</label>
+                        <input type="password" id="create-pin" placeholder="••••" required maxlength="4" pattern="\d{4}" inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn primary-btn">Generate Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Deposit Money -->
+    <div id="deposit-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-wallet"></i> Process Deposit</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="deposit-form" class="bank-form" novalidate>
+                    <div class="form-group">
+                        <label for="deposit-account">Account Number</label>
+                        <input type="text" id="deposit-account" placeholder="Enter Account Number" required inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="deposit-pin">PIN Verification</label>
+                        <input type="password" id="deposit-pin" placeholder="••••" required maxlength="4" pattern="\d{4}" inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="deposit-amount">Amount ($)</label>
+                        <input type="number" id="deposit-amount" placeholder="0.00" required min="0.01" step="0.01">
+                        <span class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn success-btn">Deposit Funds</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Withdraw Money -->
+    <div id="withdraw-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-money-bill-transfer"></i> Withdraw Funds</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="withdraw-form" class="bank-form" novalidate>
+                    <div class="form-group">
+                        <label for="withdraw-account">Account Number</label>
+                        <input type="text" id="withdraw-account" placeholder="Enter Account Number" required inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="withdraw-pin">PIN Verification</label>
+                        <input type="password" id="withdraw-pin" placeholder="••••" required maxlength="4" pattern="\d{4}" inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="withdraw-amount">Amount ($)</label>
+                        <input type="number" id="withdraw-amount" placeholder="0.00" required min="0.01" step="0.01">
+                        <span class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn warning-btn">Execute Withdrawal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Account Details -->
+    <div id="details-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-address-card"></i> Fetch Account Details</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="details-form" class="bank-form" novalidate>
+                    <div class="form-group">
+                        <label for="details-account">Account Number</label>
+                        <input type="text" id="details-account" placeholder="Enter Account Number" required inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="details-pin">PIN Verification</label>
+                        <input type="password" id="details-pin" placeholder="••••" required maxlength="4" pattern="\d{4}" inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <button type="submit" class="submit-btn primary-btn">Request Details</button>
+                </form>
+                
+                <!-- Display Area for Details Request (populated via JS) -->
+                <div id="details-result" class="details-output-box hidden">
+                    <h3>Account Metadata Record</h3>
+                    <div class="details-grid">
+                        <div class="detail-row"><span>Account No:</span> <strong id="res-acc"></strong></div>
+                        <div class="detail-row"><span>Account Holder:</span> <strong id="res-name"></strong></div>
+                        <div class="detail-row"><span>Email:</span> <span id="res-email"></span></div>
+                        <div class="detail-row"><span>Age:</span> <span id="res-age"></span></div>
+                        <div class="detail-row"><span>Current Balance:</span> <strong id="res-bal" class="text-success"></strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Update Details -->
+    <div id="update-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-user-gear"></i> Update System Record</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="update-form" class="bank-form" novalidate>
+                    <div class="form-group">
+                        <label for="update-account">Account Number</label>
+                        <input type="text" id="update-account" placeholder="Enter Account Number" required inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="update-pin">PIN Verification</label>
+                        <input type="password" id="update-pin" placeholder="••••" required maxlength="4" pattern="\d{4}" inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="section-label">Target Field</label>
+                        <div class="radio-selector">
+                            <label class="radio-option">
+                                <input type="radio" name="update_field" value="name" checked>
+                                <span class="radio-custom"></span>
+                                Name
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="update_field" value="age">
+                                <span class="radio-custom"></span>
+                                Age
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="update_field" value="email">
+                                <span class="radio-custom"></span>
+                                Email
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic form block monitored via script.js -->
+                    <div class="form-group" id="dynamic-input-container">
+                        <label id="dynamic-label" for="dynamic-input">New Name</label>
+                        <input type="text" id="dynamic-input" placeholder="New Full Name" required>
+                        <span class="error-message"></span>
+                    </div>
+
+                    <button type="submit" class="submit-btn accent-btn">Apply Parameter Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Delete Account -->
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal-card border-danger">
+            <div class="modal-header">
+                <h2 class="text-danger"><i class="fa-solid fa-user-slash"></i> Terminate Account</h2>
+                <button class="close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-alert">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p><strong>Warning:</strong> This operation removes active ledger information instantly. Data backups must be created manually.</p>
+                </div>
+                <form id="delete-form" class="bank-form" novalidate>
+                    <div class="form-group">
+                        <label for="delete-account">Account Number</label>
+                        <input type="text" id="delete-account" placeholder="Enter Account Number" required inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="delete-pin">PIN Verification</label>
+                        <input type="password" id="delete-pin" placeholder="••••" required maxlength="4" pattern="\d{4}" inputmode="numeric">
+                        <span class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group flex-row">
+                        <input type="checkbox" id="delete-confirm-box" required>
+                        <label for="delete-confirm-box" class="checkbox-label">Authorize ledger database modification and complete terminal removal.</label>
+                    </div>
+                    <span id="delete-checkbox-err" class="error-message block-error"></span>
+
+                    <button type="submit" class="submit-btn danger-btn">Permanently Remove Ledger Entry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jinja Template Reference to Custom Javascript File -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
